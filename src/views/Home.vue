@@ -9,7 +9,12 @@
             </div>
             <div class="home-section home-body">
                 <Editor></Editor>
-                <el-form class="home-body-form" :inline="true" :model="infoForm">
+                <el-form
+                    class="home-body-form"
+                    :inline="true"
+                    :model="infoForm"
+                    :rules="infoFormRules"
+                >
                     <el-form-item label="署名">
                         <el-input
                             :model="infoForm.name"
@@ -56,6 +61,18 @@ export default {
             infoForm: {
                 name: "",
                 expires: 3600
+            },
+            infoFormRules: {
+                name: [
+                    { max: 30, message: "长度在30个字符以内", trigger: "blur" }
+                ],
+                expires: [
+                    {
+                        require: true,
+                        message: "必须选择过期时间",
+                        trigger: "change"
+                    }
+                ]
             },
             expiresOptions: [
                 {
