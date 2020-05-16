@@ -6,6 +6,7 @@
 
 <script>
 let highlightDebounce;
+let editorTextLength = 0;
 export default {
     name: "editor",
     mounted() {
@@ -18,12 +19,20 @@ export default {
     methods: {
         codeChanged() {
             // 渲染高亮
+            if (!highlightDebounce && window.editor.innerText.length -  editorTextLength > 5) {
+                // 没有定时器的时候立刻对更改执行一次，提升复制粘贴的体验
+                this.doHighlight();
+            }
             clearTimeout(highlightDebounce);
             highlightDebounce = setTimeout(() => {
-                let savPos = this.saveSelection(window.editor);
-                hljs.highlightBlock(window.editor);
-                this.restoreSelection(window.editor, savPos);
+                this.doHighlight();
             }, 100);
+        },
+        doHighlight() {
+            let savPos = this.saveSelection(window.editor);
+            hljs.highlightBlock(window.editor);
+            this.restoreSelection(window.editor, savPos);
+            editorTextLength = window.editor.innerText.length;
         },
         restoreSelection(containerEl, savedSel) {
             var charIndex = 0,
