@@ -1,6 +1,6 @@
 <template>
     <div class="container-editor">
-        <pre id="editor" ref="editor" contenteditable="plaintext-only"></pre>
+        <pre id="editor" ref="editor" contenteditable="plaintext-only" spellcheck="false"></pre>
     </div>
 </template>
 
