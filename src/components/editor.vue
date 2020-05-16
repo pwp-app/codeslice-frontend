@@ -4,7 +4,6 @@
     </div>
 </template>
 
-
 <script>
 let highlightDebounce;
 export default {
