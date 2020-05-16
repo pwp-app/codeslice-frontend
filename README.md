@@ -1,19 +1,16 @@
-# codeslice
+<div align="center">
+<img src="https://github.com/pwp-app/codeslice-frontend/blob/master/assets/codeslice.png?raw=true" width="96">
+<h1>CodeSlice</h1>
+</div>
 
-## Project setup
-```
-npm install
-```
+## 概览
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+CodeSlice是一个类似于Pastebin的、用于在一定时间内临时分享代码的Web应用。
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## 使用说明
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+同其他Vue Cli 3项目。
+
+## 许可证
+
+MIT
