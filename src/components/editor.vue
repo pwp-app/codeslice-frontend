@@ -30,6 +30,7 @@ export default {
         },
         doHighlight() {
             let savPos = this.saveSelection(window.editor);
+            window.editor.removeAttribute('class');
             hljs.highlightBlock(window.editor);
             this.restoreSelection(window.editor, savPos);
             editorTextLength = window.editor.innerText.length;
