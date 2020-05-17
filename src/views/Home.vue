@@ -11,13 +11,14 @@
                 <Editor></Editor>
                 <el-form
                     class="home-body-form"
+                    ref="infoForm"
                     :inline="true"
                     :model="infoForm"
                     :rules="infoFormRules"
                 >
                     <el-form-item label="署名">
                         <el-input
-                            :model="infoForm.name"
+                            :model="infoForm.poster"
                             placeholder="留空视为匿名"
                         ></el-input>
                     </el-form-item>
@@ -33,7 +34,12 @@
                         </el-select>
                     </el-form-item>
                     <div class="home-body-action">
-                        <el-button type="primary">分享</el-button>
+                        <el-button
+                            type="primary"
+                            @click="submit"
+                            :disabled="submitButtonDisabled">
+                            分享
+                        </el-button>
                     </div>
                 </el-form>
             </div>
@@ -59,7 +65,7 @@ export default {
     data() {
         return {
             infoForm: {
-                name: "",
+                poster: "",
                 expires: 3600
             },
             infoFormRules: {
@@ -111,8 +117,58 @@ export default {
                     value: 86400,
                     text: "24小时"
                 }
-            ]
+            ],
+            submitButtonDisabled: false
         };
+    },
+    methods: {
+        validateForm() {
+            return new Promise((resolve, reject) => {
+                this.$refs.infoForm.validate((valid) => {
+                    resolve(valid);
+                })
+            });
+        },
+        submit() {
+            let content = window.editor.innerText;
+            const h = this.$createElement;
+            this.submitButtonDisabled = true;
+            this.axios
+                .post("/api/v1/slice/submit", {
+                    content,
+                    expires: this.infoForm.expires,
+                    poster: this.infoForm.poster.length
+                        ? this.infoForm.poster
+                        : null
+                })
+                .then(res => {
+                    this.submitButtonDisabled = false;
+                    if (res && res.data.code !== 200) {
+                        this.$message({
+                            message: res.data.message,
+                            type: "error"
+                        });
+                        return;
+                    }
+                    let key = res.data.data;
+                    this.$msgbox({
+                        title: "分享链接",
+                        message: h("a", {
+                            class: 'home-share-link',
+                            attrs: {
+                                href: `https://codeslice.pwp.app/${key}`,
+                                target: '_blank'
+                            }
+                        }, `https://codeslice.pwp.app/${key}`),
+                        showCancelButton: false
+                    }).catch(() => {
+                        /* do nothing */
+                    });
+                })
+                .catch(() => {
+                    this.submitButtonDisabled = false;
+                });
+        }
     }
 };
 </script>

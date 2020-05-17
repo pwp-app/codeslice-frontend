@@ -8,6 +8,8 @@ import './plugins/element.js'
 
 Vue.config.productionTip = false;
 
+axios.defaults.timeout = 10000;
+
 // set up axios
 Vue.use(VueAxios, axios)
 
