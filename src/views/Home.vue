@@ -145,7 +145,7 @@ export default {
                     this.submitButtonDisabled = false;
                     if (res && res.data.code !== 200) {
                         this.$message({
-                            message: res.data.message,
+                            message: res.data.message.length ? res.data.message : '分享失败',
                             type: "error"
                         });
                         return;
