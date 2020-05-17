@@ -35,11 +35,11 @@ export default {
             editorTextLength = window.editor.innerText.length;
         },
         restoreSelection(containerEl, savedSel) {
-            var charIndex = 0,
+            let charIndex = 0,
                 range = document.createRange();
             range.setStart(containerEl, 0);
             range.collapse(true);
-            var nodeStack = [containerEl],
+            let nodeStack = [containerEl],
                 node,
                 foundStart = false,
                 stop = false;
@@ -65,23 +65,23 @@ export default {
                     }
                     charIndex = nextCharIndex;
                 } else {
-                    var i = node.childNodes.length;
+                    let i = node.childNodes.length;
                     while (i--) {
                         nodeStack.push(node.childNodes[i]);
                     }
                 }
             }
 
-            var sel = window.getSelection();
+            let sel = window.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
         },
         saveSelection(containerEl) {
-            var range = window.getSelection().getRangeAt(0);
-            var preSelectionRange = range.cloneRange();
+            let range = window.getSelection().getRangeAt(0);
+            let preSelectionRange = range.cloneRange();
             preSelectionRange.selectNodeContents(containerEl);
             preSelectionRange.setEnd(range.startContainer, range.startOffset);
-            var start = preSelectionRange.toString().length;
+            let start = preSelectionRange.toString().length;
 
             return {
                 start: start,
