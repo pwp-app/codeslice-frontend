@@ -1,17 +1,22 @@
 import Vue from 'vue';
 import App from './App.vue';
-import axios from 'axios'
-import VueAxios from 'vue-axios'
+import axios from 'axios';
+import VueAxios from 'vue-axios';
+import VueClipboard from 'vue-clipboard2';
+
 import router from './router';
 import './styles/main.less';
-import './plugins/element.js'
+import './plugins/element.js';
 
 Vue.config.productionTip = false;
 
 axios.defaults.timeout = 10000;
 
 // set up axios
-Vue.use(VueAxios, axios)
+Vue.use(VueAxios, axios);
+
+// set up clipboard plugin
+Vue.use(VueClipboard);
 
 new Vue({
     router,
