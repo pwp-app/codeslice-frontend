@@ -126,6 +126,10 @@ export default {
                                 hljs.lineNumbersBlock(code);
                             });
                         }
+                    } else {
+                        this.slice.loading = false;
+                        this.slice.content = null;
+                        this.error = "很抱歉，服务器出现了一些问题，代码获取失败。";
                     }
                 })
                 .catch(() => {
