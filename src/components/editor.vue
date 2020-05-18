@@ -7,17 +7,23 @@
 <script>
 let highlightDebounce;
 let editorTextLength = 0;
+let composition = false;
 export default {
     name: "editor",
     mounted() {
         window.editor = document.getElementById("editor");
         window.editor.addEventListener("input", this.codeChanged);
+        window.editor.addEventListener('compositionstart', this.compositionStart);
+        window.editor.addEventListener('compositionend', this.compositionEnd);
     },
     destroyed() {
         window.editor.removeEventListener("input", this.codeChanged);
     },
     methods: {
         codeChanged() {
+            if (composition) {
+                return;
+            }
             // 渲染高亮
             if (!highlightDebounce && window.editor.innerText.length -  editorTextLength > 5) {
                 // 没有定时器的时候立刻对更改执行一次，提升复制粘贴的体验
@@ -34,6 +40,12 @@ export default {
             hljs.highlightBlock(window.editor);
             this.restoreSelection(window.editor, savPos);
             editorTextLength = window.editor.innerText.length;
+        },
+        compositionStart() {
+            composition = true;
+        },
+        compositionEnd() {
+            composition = false;
         },
         restoreSelection(containerEl, savedSel) {
             let charIndex = 0,
