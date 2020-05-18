@@ -52,9 +52,6 @@
                             error ? error : "很抱歉，该代码不存在或已过期。"
                         }}</span>
                     </div>
-                    <div class="present-retry">
-                        <el-button type="primary">重试</el-button>
-                    </div>
                 </div>
             </transition-group>
         </div>
