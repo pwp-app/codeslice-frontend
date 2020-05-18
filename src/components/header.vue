@@ -1,9 +1,9 @@
 <template>
     <header class="container container-header">
-        <div class="header-logo">
+        <div class="header-logo" @click="toHome">
             <img :src="logo">
         </div>
-        <div class="header-title">
+        <div class="header-title" @click="toHome">
             <p>CodeSlice</p>
         </div>
     </header>
@@ -15,6 +15,13 @@ export default {
     data() {
         return {
             logo: require('../../assets/codeslice.png')
+        }
+    },
+    methods: {
+        toHome() {
+            if (this.$route.path !== '/') {
+                this.$router.push('/');
+            }
         }
     }
 }
