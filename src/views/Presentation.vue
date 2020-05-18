@@ -16,9 +16,7 @@
                 >
                     <div class="present-text present-title">
                         <span>
-                            以下是<i class="present-space"></i
-                            >{{ slice.poster ? slice.poster : ""
-                            }}<i class="present-space"></i>分享给您的代码：
+                            以下是<i class="present-space"></i>{{ slice.poster ? slice.poster : ""}}<i class="present-space"></i>分享给您的代码：
                         </span>
                     </div>
                     <div class="present-code">
