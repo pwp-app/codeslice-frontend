@@ -133,7 +133,14 @@ export default {
             this.submit();
         },
         async submit() {
-            let content = window.editor.innerText;
+            let content = window.editor.innerText.trim();
+            if (content.length < 1) {
+                this.$message({
+                    type: 'error',
+                    message: '请填写内容'
+                });
+                return;
+            }
             const h = this.$createElement;
             this.submitButtonDisabled = true;
             await this.$recaptchaLoaded();
@@ -154,7 +161,7 @@ export default {
                         let message = res.data.message.trim();
                         this.$message({
                             type: "error",
-                            message: message.length ? message : '分享失败'
+                            message: (message.length > 0 ? message : '分享失败')
                         });
                         return;
                     }
