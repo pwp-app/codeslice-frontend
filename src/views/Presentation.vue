@@ -2,7 +2,7 @@
     <div class="container-present">
         <div class="present">
             <Header></Header>
-            <transition-group mode="in-out" enter-active-class="animated fadeIn animate-delay" leave-to-class="animated fadeOut">
+            <transition-group mode="out-in" enter-active-class="animated fadeIn animate-delay" leave-to-class="animated fadeOut">
                 <div class="container present-main" key="loading" v-if="slice.loading">
                     <div class="present-text present-loading">
                         <i class="el-icon-loading"></i>
@@ -16,7 +16,7 @@
                 >
                     <div class="present-text present-title">
                         <span>
-                            以下是<i class="present-space"></i>{{ slice.poster ? slice.poster : ""}}<i class="present-space"></i>分享给您的代码：
+                            以下是<i class="present-space" v-if="slice.poster"></i>{{ slice.poster ? slice.poster : ""}}<i class="present-space" v-if="slice.poster"></i>分享给您的代码：
                         </span>
                     </div>
                     <div class="present-code">
