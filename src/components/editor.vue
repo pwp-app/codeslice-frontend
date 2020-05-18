@@ -1,6 +1,11 @@
 <template>
     <div class="container-editor">
-        <pre id="editor" ref="editor" contenteditable="plaintext-only" spellcheck="false"></pre>
+        <pre
+            id="editor"
+            ref="editor"
+            contenteditable="plaintext-only"
+            spellcheck="false"
+        ></pre>
     </div>
 </template>
 
@@ -13,11 +18,24 @@ export default {
     mounted() {
         window.editor = document.getElementById("editor");
         window.editor.addEventListener("input", this.codeChanged);
-        window.editor.addEventListener('compositionstart', this.compositionStart);
-        window.editor.addEventListener('compositionend', this.compositionEnd);
+        window.editor.addEventListener(
+            "compositionstart",
+            this.compositionStart
+        );
+        window.editor.addEventListener("compositionend", this.compositionEnd);
+        window.editor.addEventListener("keydown", this.editorKeyDown);
     },
     destroyed() {
         window.editor.removeEventListener("input", this.codeChanged);
+        window.editor.removeEventListener(
+            "compositionstart",
+            this.compositionStart
+        );
+        window.editor.removeEventListener(
+            "compositionend",
+            this.compositionEnd
+        );
+        window.editor.removeEventListener("keydown", this.editorKeyDown);
     },
     methods: {
         codeChanged() {
@@ -25,7 +43,10 @@ export default {
                 return;
             }
             // 渲染高亮
-            if (!highlightDebounce && window.editor.innerText.length -  editorTextLength > 5) {
+            if (
+                !highlightDebounce &&
+                window.editor.innerText.length - editorTextLength > 5
+            ) {
                 // 没有定时器的时候立刻对更改执行一次，提升复制粘贴的体验
                 this.doHighlight();
             }
@@ -35,8 +56,8 @@ export default {
             }, 100);
         },
         doHighlight() {
-            let savPos = this.saveSelection(window.editor);
-            window.editor.removeAttribute('class');
+            let savPos = this.getSelection(window.editor);
+            window.editor.removeAttribute("class");
             hljs.highlightBlock(window.editor);
             this.restoreSelection(window.editor, savPos);
             editorTextLength = window.editor.innerText.length;
@@ -46,6 +67,28 @@ export default {
         },
         compositionEnd() {
             composition = false;
+        },
+        editorKeyDown(e) {
+            if (e.keyCode === 9) {
+                let selection = this.getSelection(window.editor);
+                let { start, end } = selection;
+                if (start === end) {
+                    document.execCommand("insertText", false, "    ");
+                    setTimeout(() => {
+                        selection.start += 4;
+                        selection.end += 4;
+                        this.restoreSelection(window.editor, selection);
+                    }, 0)
+                } else {
+                    let offset = 4 - (selection.end - selection.start);
+                    document.execCommand("insertText", false, "    ");
+                    setTimeout(() => {
+                        selection.end += offset;
+                        selection.start = selection.end;
+                        this.restoreSelection(window.editor, selection);
+                    }, 0)
+                }
+            }
         },
         restoreSelection(containerEl, savedSel) {
             let charIndex = 0,
@@ -89,13 +132,12 @@ export default {
             sel.removeAllRanges();
             sel.addRange(range);
         },
-        saveSelection(containerEl) {
+        getSelection(containerEl) {
             let range = window.getSelection().getRangeAt(0);
             let preSelectionRange = range.cloneRange();
             preSelectionRange.selectNodeContents(containerEl);
             preSelectionRange.setEnd(range.startContainer, range.startOffset);
             let start = preSelectionRange.toString().length;
-
             return {
                 start: start,
                 end: start + range.toString().length
