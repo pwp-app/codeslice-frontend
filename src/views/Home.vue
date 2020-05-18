@@ -36,7 +36,7 @@
                     <div class="home-body-action">
                         <el-button
                             type="primary"
-                            @click="submit"
+                            @click="doVerify"
                             :disabled="submitButtonDisabled">
                             分享
                         </el-button>
@@ -45,6 +45,7 @@
             </div>
         </div>
         <Footer></Footer>
+        <reCaptcha ref="recaptcha" @verify="submit"></reCaptcha>
     </div>
 </template>
 
@@ -52,6 +53,7 @@
 import Header from "../components/header";
 import Footer from "../components/footer";
 import Editor from "../components/editor";
+import reCaptcha from "../components/recaptcha";
 import "../styles/editor/editor.less";
 import "../styles/views/home.less";
 
@@ -60,7 +62,8 @@ export default {
     components: {
         Header,
         Footer,
-        Editor
+        Editor,
+        reCaptcha
     },
     data() {
         return {
@@ -129,17 +132,29 @@ export default {
                 })
             });
         },
-        submit() {
+        doVerify() {
+            this.submitButtonDisabled = true;
+            try {
+                this.executeRecaptcha();
+            } catch {
+                this.$message.error('验证服务加载失败，请刷新页面后重试');
+                this.submitButtonDisabled = false;
+            }
+        },
+        executeRecaptcha() {
+            this.$refs.recaptcha.execute();
+        },
+        submit(token) {
             let content = window.editor.innerText;
             const h = this.$createElement;
-            this.submitButtonDisabled = true;
             this.axios
                 .post("/api/v1/slice/submit", {
                     content,
                     expires: this.infoForm.expires,
                     poster: this.infoForm.poster.length
                         ? this.infoForm.poster
-                        : null
+                        : null,
+                    token
                 })
                 .then(res => {
                     this.submitButtonDisabled = false;
