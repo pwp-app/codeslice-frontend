@@ -18,7 +18,7 @@
                 >
                     <el-form-item label="署名">
                         <el-input
-                            :model="infoForm.poster"
+                            v-model="infoForm.poster"
                             placeholder="留空视为匿名"
                         ></el-input>
                     </el-form-item>
@@ -36,7 +36,7 @@
                     <div class="home-body-action">
                         <el-button
                             type="primary"
-                            @click="doVerify"
+                            @click="doSubmit"
                             :disabled="submitButtonDisabled">
                             分享
                         </el-button>
@@ -45,7 +45,6 @@
             </div>
         </div>
         <Footer></Footer>
-        <reCaptcha ref="recaptcha" @verify="submit"></reCaptcha>
     </div>
 </template>
 
@@ -53,7 +52,6 @@
 import Header from "../components/header";
 import Footer from "../components/footer";
 import Editor from "../components/editor";
-import reCaptcha from "../components/recaptcha";
 import "../styles/editor/editor.less";
 import "../styles/views/home.less";
 
@@ -63,16 +61,15 @@ export default {
         Header,
         Footer,
         Editor,
-        reCaptcha
     },
     data() {
         return {
             infoForm: {
-                poster: "",
+                poster: '',
                 expires: 3600
             },
             infoFormRules: {
-                name: [
+                poster: [
                     { max: 30, message: "长度在30个字符以内", trigger: "blur" }
                 ],
                 expires: [
@@ -132,21 +129,15 @@ export default {
                 })
             });
         },
-        doVerify() {
-            this.submitButtonDisabled = true;
-            try {
-                this.executeRecaptcha();
-            } catch {
-                this.$message.error('验证服务加载失败，请刷新页面后重试');
-                this.submitButtonDisabled = false;
-            }
+        doSubmit() {
+            this.submit();
         },
-        executeRecaptcha() {
-            this.$refs.recaptcha.execute();
-        },
-        submit(token) {
+        async submit() {
             let content = window.editor.innerText;
             const h = this.$createElement;
+            this.submitButtonDisabled = true;
+            await this.$recaptchaLoaded();
+            const token = await this.$recaptcha('login');
             this.axios
                 .post("/api/v1/slice/submit", {
                     content,
@@ -159,23 +150,27 @@ export default {
                 .then(res => {
                     this.submitButtonDisabled = false;
                     if (res && res.data.code !== 200) {
+                        let message = res.data.message.trim();
                         this.$message({
-                            message: res.data.message.length ? res.data.message : '分享失败',
-                            type: "error"
+                            type: "error",
+                            message: message.length ? message : '分享失败'
                         });
                         return;
                     }
                     let key = res.data.data;
+                    let link = `https://codeslice.pwp.app/${key}`;
                     this.$msgbox({
                         title: "分享链接",
                         message: h("a", {
                             class: 'home-share-link',
                             attrs: {
-                                href: `https://codeslice.pwp.app/${key}`,
+                                href: link,
                                 target: '_blank'
                             }
-                        }, `https://codeslice.pwp.app/${key}`),
+                        }, link),
                         showCancelButton: false
+                    }).then(() => {
+                        this.$copyText(link);
                     }).catch(() => {
                         /* do nothing */
                     });
