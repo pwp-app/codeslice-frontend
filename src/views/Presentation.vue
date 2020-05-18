@@ -2,7 +2,7 @@
     <div class="container-present">
         <div class="present">
             <Header></Header>
-            <transition mode="out-in" enter-active-class="animated fadeIn" leave-active-class="animated fadeOut animate-delay">
+            <transition-group mode="in-out" enter-active-class="animated fadeIn animate-delay" leave-to-class="animated fadeOut">
                 <div class="container present-main" key="loading" v-if="slice.loading">
                     <div class="present-text present-loading">
                         <i class="el-icon-loading"></i>
@@ -12,7 +12,7 @@
                 <div
                     class="container present-main"
                     key="main"
-                    v-if="slice.content && !slice.loading"
+                    v-show="slice.content && !slice.loading"
                 >
                     <div class="present-text present-title">
                         <span>
@@ -56,7 +56,7 @@
                         <el-button type="primary">重试</el-button>
                     </div>
                 </div>
-            </transition>
+            </transition-group>
         </div>
         <Footer></Footer>
     </div>
