@@ -16,12 +16,6 @@ body {
     clear: both;
 }
 
-.container {
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1200px;
-}
-
 .el-message-box__title {
     font-size: 15px !important;
 }
@@ -32,4 +26,29 @@ body {
 
 .grecaptcha-badge {
     display: none !important;
+}
+
+.container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+}
+
+@media (max-width: 1280px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .container {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 767px) {
+    .container {
+        max-width: calc(100vw - 48px);
+        margin: 0 24px;
+    }
 }

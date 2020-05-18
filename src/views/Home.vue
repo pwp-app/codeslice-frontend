@@ -1,7 +1,7 @@
 <template>
     <div class="container-home">
+        <Header></Header>
         <div class="container home-main">
-            <Header></Header>
             <div class="home-section home-header">
                 <div class="home-header-tip">
                     <span>在下方输入您要分享的代码：</span>

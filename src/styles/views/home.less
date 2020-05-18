@@ -1,5 +1,5 @@
 .home-main {
-    min-height: calc(100vh - 64px);
+    min-height: calc(100vh - 144px);
 }
 
 .home-section {
@@ -38,4 +38,29 @@
 
 .home-share-link:hover {
     color: lighten(#20a4f3, 20%) !important;
+}
+
+@media(max-width: 767px) {
+    .home-body {
+        &-form {
+            .el-form-item {
+                display: flex !important;
+                margin-right: 0 !important;
+                .el-form-item__content {
+                    flex-grow: 1 !important;
+                    .el-select {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+    .home-body-action {
+        float: none;
+        width: 100%;
+        margin-bottom: 24px;
+        .el-button {
+            width: 100%;
+        }
+    }
 }
