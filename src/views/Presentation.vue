@@ -1,9 +1,9 @@
 <template>
     <div class="container-present">
         <div class="present">
-            <transition>
-                <div class="container present-main" v-if="slice.loading">
-                    <Header></Header>
+            <Header></Header>
+            <transition mode="out-in" enter-active-class="animated fadeIn" leave-active-class="animated fadeOut animate-delay">
+                <div class="container present-main" key="loading" v-if="slice.loading">
                     <div class="present-text present-loading">
                         <i class="el-icon-loading"></i>
                         <span>加载中</span>
@@ -11,9 +11,9 @@
                 </div>
                 <div
                     class="container present-main"
+                    key="main"
                     v-if="slice.content && !slice.loading"
                 >
-                    <Header></Header>
                     <div class="present-text present-title">
                         <span>
                             以下是<i class="present-space"></i
@@ -46,9 +46,9 @@
                 </div>
                 <div
                     class="container present-main"
-                    v-if="!slice.content && !slice.loading"
+                    key="error"
+                    v-if="error"
                 >
-                    <Header></Header>
                     <div class="present-text present-error">
                         <span>{{
                             error ? error : "很抱歉，该代码不存在或已过期。"
@@ -80,7 +80,7 @@ export default {
     data() {
         return {
             slice: {
-                loading: true
+                loading: false
             },
             error: null,
             timeout: false
@@ -88,6 +88,14 @@ export default {
     },
     created() {
         this.fetch();
+    },
+    mounted() {
+        // 超过500ms没有加载完成，显示加载中
+        setTimeout(() => {
+            if (!this.slice.content && !this.error) {
+                this.slice.loading = true;
+            }
+        }, 500);
     },
     methods: {
         fetch() {
@@ -154,24 +162,3 @@ export default {
     }
 };
 </script>
-
-<style lang="less" scoped>
-.v-enter {
-    opacity: 0;
-}
-.v-enter-active {
-    transition: 100ms;
-}
-.v-enter-to {
-    opacity: 1;
-}
-.v-leave {
-    opacity: 1;
-}
-.v-leave-to {
-    opacity: 0;
-}
-.v-leave-active {
-    transition: 200ms;
-}
-</style>
