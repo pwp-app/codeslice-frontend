@@ -13,6 +13,15 @@
 let highlightDebounce;
 let editorTextLength = 0;
 let composition = false;
+let historyStack = [{
+    content: '',
+    selection: {
+        start: 0,
+        end: 0
+    }
+}];
+let futureStack = [];
+
 export default {
     name: "editor",
     mounted() {
@@ -53,7 +62,19 @@ export default {
             clearTimeout(highlightDebounce);
             highlightDebounce = setTimeout(() => {
                 this.doHighlight();
-            }, 100);
+                this.doRemember();
+            }, 300);
+        },
+        doRemember() {
+            // 压入历史栈
+            historyStack.push({
+                selection: this.getSelection(window.editor),
+                content: window.editor.innerText
+            });
+            if (historyStack > 50) {
+                historyStack.shift();
+            }
+            futureStack = [];
         },
         doHighlight() {
             let savPos = this.getSelection(window.editor);
@@ -88,6 +109,34 @@ export default {
                         this.restoreSelection(window.editor, selection);
                     }, 0)
                 }
+            }
+            if (e.keyCode === 90 && e.ctrlKey) {
+                // ctrl + z
+                if (historyStack.length) {
+                    futureStack.push({
+                        selection: this.getSelection(window.editor),
+                        content: window.editor.innerText
+                    });
+                    let history = historyStack.pop();
+                    window.editor.innerText = history.content;
+                    this.restoreSelection(window.editor, history.selection);
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            if (e.keyCode === 89 && e.ctrlKey) {
+                // ctrl + y
+                if (futureStack.length) {
+                    historyStack.push({
+                        selection: this.getSelection(window.editor),
+                        content: window.editor.innerText
+                    });
+                    let future = futureStack.pop();
+                    window.editor.innerText = future.content;
+                    this.restoreSelection(window.editor, future.selection);
+                }
+                e.preventDefault();
+                e.stopPropagation();
             }
         },
         restoreSelection(containerEl, savedSel) {
