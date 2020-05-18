@@ -27,10 +27,7 @@ export default {
     mounted() {
         window.editor = document.getElementById("editor");
         window.editor.addEventListener("input", this.codeChanged);
-        window.editor.addEventListener(
-            "compositionstart",
-            this.compositionStart
-        );
+        window.editor.addEventListener("compositionstart", this.compositionStart);
         window.editor.addEventListener("compositionend", this.compositionEnd);
         window.editor.addEventListener("keydown", this.editorKeyDown);
     },
