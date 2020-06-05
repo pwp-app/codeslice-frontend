@@ -145,7 +145,6 @@ export default {
             this.submitButtonDisabled = true;
             await this.$recaptchaLoaded();
             const token = await this.$recaptcha('login');
-            console.log(this.infoForm.poster);
             this.axios
                 .post("/api/v1/slice/submit", {
                     content,

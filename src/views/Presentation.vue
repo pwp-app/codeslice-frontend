@@ -120,7 +120,9 @@ export default {
                             this.$nextTick(() => {
                                 let code = document.getElementById("code");
                                 hljs.highlightBlock(code);
-                                hljs.lineNumbersBlock(code);
+                                this.$nextTick(() => {
+                                    hljs.lineNumbersBlock(code);
+                                }, 0);
                             });
                         }
                     } else {
