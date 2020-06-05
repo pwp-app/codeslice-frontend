@@ -37,7 +37,8 @@
                         <el-button
                             type="primary"
                             @click="doSubmit"
-                            :disabled="submitButtonDisabled">
+                            :disabled="submitButtonDisabled"
+                        >
                             分享
                         </el-button>
                     </div>
@@ -60,12 +61,12 @@ export default {
     components: {
         Header,
         Footer,
-        Editor,
+        Editor
     },
     data() {
         return {
             infoForm: {
-                poster: '',
+                poster: "",
                 expires: 3600
             },
             infoFormRules: {
@@ -124,9 +125,9 @@ export default {
     methods: {
         validateForm() {
             return new Promise((resolve, reject) => {
-                this.$refs.infoForm.validate((valid) => {
+                this.$refs.infoForm.validate(valid => {
                     resolve(valid);
-                })
+                });
             });
         },
         doSubmit() {
@@ -136,15 +137,15 @@ export default {
             let content = window.editor.innerText.trim();
             if (content.length < 1) {
                 this.$message({
-                    type: 'error',
-                    message: '请填写内容'
+                    type: "error",
+                    message: "请填写内容"
                 });
                 return;
             }
             const h = this.$createElement;
             this.submitButtonDisabled = true;
             await this.$recaptchaLoaded();
-            const token = await this.$recaptcha('login');
+            const token = await this.$recaptcha("login");
             this.axios
                 .post("/api/v1/slice/submit", {
                     content,
@@ -156,11 +157,11 @@ export default {
                 })
                 .then(res => {
                     this.submitButtonDisabled = false;
-                    if (res && res.data.code !== 200) {
+                    if (!res || res.data.code !== 200) {
                         let message = res.data.message.trim();
                         this.$message({
                             type: "error",
-                            message: (message.length > 0 ? message : '分享失败')
+                            message: message.length > 0 ? message : "分享失败"
                         });
                         return;
                     }
@@ -168,21 +169,31 @@ export default {
                     let link = `https://codeslice.pwp.app/${key}`;
                     this.$msgbox({
                         title: "分享链接",
-                        message: h("a", {
-                            class: 'home-share-link',
-                            attrs: {
-                                href: link,
-                                target: '_blank'
-                            }
-                        }, link),
+                        message: h(
+                            "a",
+                            {
+                                class: "home-share-link",
+                                attrs: {
+                                    href: link,
+                                    target: "_blank"
+                                }
+                            },
+                            link
+                        ),
                         showCancelButton: false
-                    }).then(() => {
-                        this.$copyText(link);
-                    }).catch(() => {
-                        /* do nothing */
-                    });
+                    })
+                        .then(() => {
+                            this.$copyText(link);
+                        })
+                        .catch(() => {
+                            /* do nothing */
+                        });
                 })
                 .catch(() => {
+                    this.$message({
+                        type: "error",
+                        message: '与服务器通讯失败',
+                    });
                     this.submitButtonDisabled = false;
                 });
         }

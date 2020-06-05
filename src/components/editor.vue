@@ -24,6 +24,11 @@ let futureStack = [];
 
 export default {
     name: "editor",
+    data() {
+        return {
+            highlightPaused: true,
+        }
+    },
     mounted() {
         window.editor = document.getElementById("editor");
         window.editor.addEventListener("input", this.codeChanged);
@@ -62,7 +67,7 @@ export default {
                 this.doRemember();
             }, 300);
         },
-        doRemember() {
+        async doRemember() {
             // 压入历史栈
             historyStack.push({
                 selection: this.getSelection(window.editor),
@@ -73,7 +78,20 @@ export default {
             }
             futureStack = [];
         },
-        doHighlight() {
+        async doHighlight() {
+            // 过长的代码不予以高亮
+            if (window.editor.innerText.length > 5000) {
+                if (!this.highlightPaused) {
+                    this.highlightPaused = true;
+                }
+                this.$message({
+                    type: 'info',
+                    message: '代码长度过长，CodeSlice 已暂停进行实时高亮',
+                })
+                return;
+            } else {
+                this.highlightPaused = false;
+            }
             let savPos = this.getSelection(window.editor);
             window.editor.removeAttribute("class");
             hljs.highlightBlock(window.editor);
